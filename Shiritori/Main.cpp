@@ -4,6 +4,7 @@
 #include <sstream>
 #include <print>
 #include "Main.h"
+#include "ChainFinder.h"
 
 int main() 
 {
@@ -12,7 +13,9 @@ int main()
 
     std::println("English title\tRomanji Title");
     for (auto& entry : entries)
-        std::println("{}\t{}", entry.GetTitle(Entry::ROMANJI), entry.GetTitle(Entry::ENGLISH));
+        std::println("{}\t{}", entry.GetTitle(ROMANJI), entry.GetTitle(ENGLISH));
+
+    ChainFinder::FindChains(entries);
 
     return 0;
 }

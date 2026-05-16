@@ -1,27 +1,27 @@
 #pragma once
 #include <string>
+#include "Language.h"
 
 class Entry
 {
 public:
-	enum Language 
-	{
-		ROMANJI, ENGLISH
-	};
 
 	Entry(std::string romanjiTitle, std::string englishTitle);
-	std::string GetTitle(Language language);
-	std::string GetTitle();
 
-	std::string GetBeginning(Language language);
-	std::string GetBeginning();
-
-	std::string GetEnding(Language language);
-	std::string GetEnding();
-
-	Language language;
+	std::string GetTitle(Language language) const;
+	std::string GetBeginning(Language language) const;
+	std::string GetEnding(Language language) const;
+	int GetId() const;
 
 private:
 	std::string romanjiTitle;
 	std::string englishTitle;
+
+	std::string sanitizedRomanjiTitle;
+	std::string sanitizedEnglishTitle;
+
+	int id;
+
+	static int GenerateId();
+	static std::string SanitizeTitle(const std::string& input);
 };

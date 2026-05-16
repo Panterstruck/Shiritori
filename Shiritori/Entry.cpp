@@ -1,50 +1,66 @@
+#include <cctype>
 #include "Entry.h"
 
 Entry::Entry(std::string romanjiTitle, std::string englishTitle)
 	: romanjiTitle(romanjiTitle)
 	, englishTitle(englishTitle)
-	, language(ROMANJI)
+	, sanitizedRomanjiTitle(SanitizeTitle(romanjiTitle))
+	, sanitizedEnglishTitle(SanitizeTitle(englishTitle))
+	, id(GenerateId())
 {
 }
 
-std::string Entry::GetTitle(Language language)
+std::string Entry::GetTitle(Language language) const
 {
 	if (language == ROMANJI)
-		return romanjiTitle;
+		return sanitizedRomanjiTitle;
 	else if (language == ENGLISH)
-		return englishTitle;
+		return sanitizedEnglishTitle;
 	return std::string();
 }
 
-std::string Entry::GetTitle()
-{
-	return GetTitle(language);
-}
-
-std::string Entry::GetBeginning(Language language)
+std::string Entry::GetBeginning(Language language) const
 {
 	if (language == ROMANJI)
-		return romanjiTitle.substr(0, 2);
+		return sanitizedRomanjiTitle.substr(0, 2);
 	else if (language == ENGLISH)
-		return englishTitle.substr(0, 2);
+		return sanitizedEnglishTitle.substr(0, 2);
 	return std::string();
 }
 
-std::string Entry::GetBeginning()
-{
-	return GetBeginning(language);
-}
-
-std::string Entry::GetEnding(Language language)
+std::string Entry::GetEnding(Language language) const
 {
 	if (language == ROMANJI)
-		return romanjiTitle.substr(romanjiTitle.size() - 2 , 2);
+		return sanitizedRomanjiTitle.substr(sanitizedRomanjiTitle.size() - 2 , 2);
 	else if (language == ENGLISH)
-		return englishTitle.substr(englishTitle.size() - 2, 2);
+		return sanitizedEnglishTitle.substr(sanitizedEnglishTitle.size() - 2, 2);
 	return std::string();
 }
 
-std::string Entry::GetEnding()
+int Entry::GetId() const
 {
-	return GetEnding(language);
+	return id;
+}
+
+int Entry::GenerateId()
+{
+	static int counter = 0;
+	return ++counter;
+}
+
+std::string Entry::SanitizeTitle(const std::string& input)
+{
+	std::string result;
+	// Pre-allocate memory to prevent reallocation overhead during the loop
+	result.reserve(input.size());
+
+	for (char c : input)
+	{
+		// Note: Casting to unsigned char is required by the C++ standard 
+		// to prevent undefined behavior with negative char values.
+		if (std::isalpha(static_cast<unsigned char>(c)))
+			result.push_back(std::toupper(static_cast<unsigned char>(c)));
+	}
+
+	return result;
 }
