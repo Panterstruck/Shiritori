@@ -9,7 +9,7 @@ using Chain = std::vector<Link>;
 class ChainFinder
 {
 public:
-	static std::vector<Chain> FindLinks(const std::vector<Entry> entries);
+	static std::vector<Chain> FindLinks(const std::vector<Entry>& entries);
 	static std::vector<Chain> ChainLinks(std::vector<Chain>& openChains, const std::vector<Chain>& links);
 
 private:

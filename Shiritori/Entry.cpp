@@ -51,6 +51,15 @@ bool Entry::StartsWithN(Language language) const
 	return false;
 }
 
+bool Entry::EndsWithN(Language language) const
+{
+	if (language == ROMANJI)
+		return sanitizedRomanjiTitle.substr(sanitizedRomanjiTitle.size() - 1, 1) == "N";
+	else if (language == ENGLISH)
+		return sanitizedEnglishTitle.substr(sanitizedEnglishTitle.size() - 1, 1) == "N";
+	return false;
+}
+
 int Entry::GenerateId()
 {
 	static int counter = 0;

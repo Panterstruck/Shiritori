@@ -22,9 +22,17 @@ int main()
     auto chains = links;
 
     // 3rd iteration: check links against remaining entries (only forwards), remove chains that did not get longer
-    auto terminatedChains = ChainFinder::ChainLinks(chains, links);
+    int iteration = 0;
+    std::vector<Chain> terminatedChains;
+    while (chains.size() > 0 && iteration < entries.size())
+    {
+        auto nextSet = ChainFinder::ChainLinks(chains, links);
+        terminatedChains.insert(terminatedChains.end(), nextSet.begin(), nextSet.end());
+        iteration++;
+        // 4th iteration: repeat prev
+    }
 
-    // 4th iteration: repeat prev
+    ExportChainsToCSV(terminatedChains, "chains.csv");
 
     return 0;
 }
@@ -53,7 +61,7 @@ std::vector<Entry> ImportEntries(std::string& filename)
         std::string romajiTitle;
         std::string englishTitle;
 
-        char delimiter = ',';
+        char delimiter = '\t';
         if (std::getline(ss, romajiTitle, delimiter) && std::getline(ss, englishTitle, delimiter))
             entries.emplace_back(romajiTitle, englishTitle);
         else
@@ -64,4 +72,32 @@ std::vector<Entry> ImportEntries(std::string& filename)
     std::println("Finished reading file.");
     std::println();
     return entries;
+}
+
+void ExportChainsToCSV(const std::vector<Chain>& chains, const std::string& filename)
+{
+    std::ofstream file(filename);
+
+    if (!file.is_open())
+    {
+        std::println(stderr, "Error: Could not open {} for writing.", filename);
+        return;
+    }
+
+    for (const auto& chain : chains)
+    {
+        for (size_t i = 0; i < chain.size(); ++i)
+        {
+            const auto& link = chain[i];
+            std::string title = link.GetTitle();
+            file << title;
+
+            if (i < chain.size() - 1)
+                file << "\t";
+        }
+        file << "\n";
+    }
+
+    file.close();
+    std::println("Successfully exported {} chains to {}", chains.size(), filename);
 }

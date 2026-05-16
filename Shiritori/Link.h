@@ -8,9 +8,8 @@ public:
 	Link(Entry entry, Language language);
 
 	std::string GetTitle() const;
-	std::string GetBeginning() const;
-	std::string GetEnding() const;
 	Language GetLanguage() const;
+	bool EndsWithN() const;
 
 	bool operator==(const Link& other) const;
 

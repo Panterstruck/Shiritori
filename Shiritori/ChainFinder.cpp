@@ -2,7 +2,7 @@
 #include "ChainFinder.h"
 #include "Link.h"
 
-std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry> entries)
+std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 {
 	std::vector<Chain> chains;
 
@@ -43,26 +43,27 @@ std::vector<Chain> ChainFinder::ChainLinks(std::vector<Chain>& openChains, const
 	for (auto& chain : openChains)
 	{
 		std::vector<Chain> extendedChains;
-		auto length = chain.size();
-		for (auto& link : links)
+		auto& left = chain.back();
+
+		if (!left.EndsWithN())
 		{
-			auto& left = chain.back();
-			auto& right = link.front();
-			auto& next = link.back();
-			if (left == right
-				&& left.GetLanguage() == right.GetLanguage()
-				&& !std::ranges::contains(chain, next))
+			for (auto& link : links)
 			{
-				auto newChain = chain;
-				newChain.push_back(next);
-				extendedChains.push_back(std::move(newChain));
+				auto& right = link.front();
+				auto& next = link.back();
+				if (left == right
+					&& left.GetLanguage() == right.GetLanguage()
+					&& !std::ranges::contains(chain, next))
+				{
+					auto newChain = chain;
+					newChain.push_back(next);
+					extendedChains.push_back(std::move(newChain));
+				}
 			}
 		}
 
 		if (extendedChains.empty())
-		{
 			terminatedChains.push_back(chain);
-		}
 		else
 		{
 			for (auto& newChain : extendedChains)
