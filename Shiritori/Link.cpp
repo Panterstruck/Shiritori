@@ -20,3 +20,18 @@ std::string Link::GetEnding() const
 {
 	return entry->GetEnding(language);
 }
+
+int Link::GetId() const
+{
+	return entry->GetId();
+}
+
+Language Link::GetLanguage() const
+{
+	return language;
+}
+
+bool Link::operator==(const Link& other) const
+{
+	return this->GetId() == other.GetId();
+}

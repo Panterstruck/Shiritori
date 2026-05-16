@@ -13,9 +13,9 @@ Entry::Entry(std::string romanjiTitle, std::string englishTitle)
 std::string Entry::GetTitle(Language language) const
 {
 	if (language == ROMANJI)
-		return sanitizedRomanjiTitle;
+		return romanjiTitle;
 	else if (language == ENGLISH)
-		return sanitizedEnglishTitle;
+		return englishTitle;
 	return std::string();
 }
 
@@ -40,6 +40,15 @@ std::string Entry::GetEnding(Language language) const
 int Entry::GetId() const
 {
 	return id;
+}
+
+bool Entry::StartsWithN(Language language) const
+{
+	if (language == ROMANJI)
+		return sanitizedRomanjiTitle.substr(0, 1) == "N";
+	else if (language == ENGLISH)
+		return sanitizedEnglishTitle.substr(0, 1) == "N";
+	return false;
 }
 
 int Entry::GenerateId()

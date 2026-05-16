@@ -12,6 +12,7 @@ public:
 	std::string GetBeginning(Language language) const;
 	std::string GetEnding(Language language) const;
 	int GetId() const;
+	bool StartsWithN(Language language) const;
 
 private:
 	std::string romanjiTitle;

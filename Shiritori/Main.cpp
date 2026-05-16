@@ -9,13 +9,22 @@
 int main() 
 {
     std::string filename = "shiritori.csv";
+
+    // 1st iteration: put all entries into separate vectors
     std::vector<Entry> entries = ImportEntries(filename);
 
     std::println("English title\tRomanji Title");
     for (auto& entry : entries)
         std::println("{}\t{}", entry.GetTitle(ROMANJI), entry.GetTitle(ENGLISH));
 
-    ChainFinder::FindChains(entries);
+    // 2nd iteration: find all possible links (backwards and forwards)
+    auto links = ChainFinder::FindLinks(entries);
+    auto chains = links;
+
+    // 3rd iteration: check links against remaining entries (only forwards), remove chains that did not get longer
+    auto terminatedChains = ChainFinder::ChainLinks(chains, links);
+
+    // 4th iteration: repeat prev
 
     return 0;
 }

@@ -1,7 +1,8 @@
+#include <algorithm>
 #include "ChainFinder.h"
 #include "Link.h"
 
-std::vector<Chain> ChainFinder::FindChains(const std::vector<Entry> entries)
+std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry> entries)
 {
 	std::vector<Chain> chains;
 
@@ -13,32 +14,71 @@ std::vector<Chain> ChainFinder::FindChains(const std::vector<Entry> entries)
 		for (size_t right = left + 1; right < entries.size(); right++)
 		{
 			auto& rightEntry = entries.at(right);
+			const Language languages[] = { ROMANJI, ENGLISH };
 
-			if (leftEntry.GetEnding(ROMANJI) == rightEntry.GetBeginning(ROMANJI))
-				chains.emplace_back(LinkEntries(leftEntry, ROMANJI, rightEntry, ROMANJI));
-			if (rightEntry.GetEnding(ROMANJI) == leftEntry.GetBeginning(ROMANJI))
-				chains.emplace_back(LinkEntries(rightEntry, ROMANJI, leftEntry, ROMANJI));
+			for (auto leftLanguage : languages)
+			{
+				for (auto rightLanguage : languages)
+				{
+					// Forward Check: Left -> Right
+					if (IsMatch(leftEntry, leftLanguage, rightEntry, rightLanguage))
+						chains.emplace_back(LinkEntries(leftEntry, leftLanguage, rightEntry, rightLanguage));
 
-			if (leftEntry.GetEnding(ROMANJI) == rightEntry.GetBeginning(ENGLISH))
-				chains.emplace_back(LinkEntries(leftEntry, ROMANJI, rightEntry, ENGLISH));
-			if (rightEntry.GetEnding(ROMANJI) == leftEntry.GetBeginning(ENGLISH))
-				chains.emplace_back(LinkEntries(rightEntry, ROMANJI, leftEntry, ENGLISH));
-
-			if (leftEntry.GetEnding(ENGLISH) == rightEntry.GetBeginning(ROMANJI))
-				chains.emplace_back(LinkEntries(leftEntry, ENGLISH, rightEntry, ROMANJI));
-			if (rightEntry.GetEnding(ENGLISH) == leftEntry.GetBeginning(ROMANJI))
-				chains.emplace_back(LinkEntries(rightEntry, ENGLISH, leftEntry, ROMANJI));
-
-			if (leftEntry.GetEnding(ENGLISH) == rightEntry.GetBeginning(ENGLISH))
-				chains.emplace_back(LinkEntries(leftEntry, ENGLISH, rightEntry, ENGLISH));
-			if (rightEntry.GetEnding(ENGLISH) == leftEntry.GetBeginning(ENGLISH))
-				chains.emplace_back(LinkEntries(rightEntry, ENGLISH, leftEntry, ENGLISH));
+					// Reverse Check: Right -> Left
+					if (IsMatch(rightEntry, rightLanguage, leftEntry, leftLanguage))
+						chains.emplace_back(LinkEntries(rightEntry, rightLanguage, leftEntry, leftLanguage));
+				}
+			}
 		}
 	}
 
-	// then use the list of links to find longer chains. implies that the object may need to be able to contain more than 2, but also be able to handle single entries
-
 	return chains;
+}
+
+std::vector<Chain> ChainFinder::ChainLinks(std::vector<Chain>& openChains, const std::vector<Chain>& links)
+{
+	std::vector<Chain> terminatedChains;
+	std::vector<Chain> nextGenChains;
+
+	for (auto& chain : openChains)
+	{
+		std::vector<Chain> extendedChains;
+		auto length = chain.size();
+		for (auto& link : links)
+		{
+			auto& left = chain.back();
+			auto& right = link.front();
+			auto& next = link.back();
+			if (left == right
+				&& left.GetLanguage() == right.GetLanguage()
+				&& !std::ranges::contains(chain, next))
+			{
+				auto newChain = chain;
+				newChain.push_back(next);
+				extendedChains.push_back(std::move(newChain));
+			}
+		}
+
+		if (extendedChains.empty())
+		{
+			terminatedChains.push_back(chain);
+		}
+		else
+		{
+			for (auto& newChain : extendedChains)
+				nextGenChains.push_back(std::move(newChain));
+		}
+	}
+
+	openChains = std::move(nextGenChains);
+	return terminatedChains;
+}
+
+bool ChainFinder::IsMatch(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage)
+{
+	if (rightEntry.StartsWithN(rightLanguage))
+		return false;
+	return leftEntry.GetEnding(leftLanguage) == rightEntry.GetBeginning(rightLanguage);
 }
 
 std::vector<Link> ChainFinder::LinkEntries(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage)
