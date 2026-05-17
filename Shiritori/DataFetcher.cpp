@@ -2,15 +2,42 @@
 #include <print>
 #include "DataFetcher.h"
 #include "httplib.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 std::vector<Entry> DataFetcher::GetAnilistEntriesByUser(std::string username, time_t startDate)
 {
 	std::vector<Entry> entries;
 
 	httplib::Client client("https://graphql.anilist.co");
-	std::string request = R"({ "query": "query { Media(id: 153800, type: ANIME) { title { romaji english } } }" })";
+	std::string query = R"(
+        query ($user: String) {
+          MediaListCollection(userName: $user, type: ANIME, status: COMPLETED) {
+            lists {
+              entries {
+                startedAt { year month day }
+                media {
+                  id
+                  format
+                  episodes
+                  duration
+                  title { romaji english }
+                }
+              }
+            }
+          }
+        }
+    )";
 
-	auto response = client.Post("/", request, "application/json");
+	json requestPayload = {
+		{"query", query},
+		{"variables", {
+			{"user", username}
+		}}
+	};
+
+	auto response = client.Post("/", requestPayload.dump(), "application/json");
 
 	if (response)
 	{
