@@ -5,6 +5,7 @@
 #include <print>
 #include "Main.h"
 #include "ChainFinder.h"
+#include "DataFetcher.h"
 
 int main() 
 {
@@ -12,6 +13,8 @@ int main()
 
     // 1st iteration: put all entries into separate vectors
     std::vector<Entry> entries = ImportEntries(filename);
+
+    auto test = DataFetcher::GetAnilistEntriesByUser("JaguarJack", time_t());
 
     std::println("English title\tRomanji Title");
     for (auto& entry : entries)
