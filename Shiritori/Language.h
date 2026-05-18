@@ -2,5 +2,5 @@
 
 enum Language
 {
-	ROMANJI, ENGLISH
+	ROMAJI, ENGLISH
 };

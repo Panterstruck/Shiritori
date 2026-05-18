@@ -11,16 +11,14 @@ int main()
 {
     std::string filename = "shiritori.csv";
 
-    // 1st iteration: put all entries into separate vectors
-    std::vector<Entry> entries = ImportEntries(filename);
+    //std::vector<Entry> entries = ImportEntries(filename);
 
-    auto test = DataFetcher::GetAnilistEntriesByUser("JaguarJack", time_t());
+    auto entries = DataFetcher::GetAnilistEntriesByUser("JaguarJack", "2024-05-17");
 
-    std::println("English title\tRomanji Title");
+    std::println("English title\tRomaji Title");
     for (auto& entry : entries)
-        std::println("{}\t{}", entry.GetTitle(ROMANJI), entry.GetTitle(ENGLISH));
+        std::println("{}\t{}", entry.GetTitle(ROMAJI), entry.GetTitle(ENGLISH));
 
-    // 2nd iteration: find all possible links (backwards and forwards)
     auto links = ChainFinder::FindLinks(entries);
     auto chains = links;
 
@@ -32,7 +30,6 @@ int main()
         auto nextSet = ChainFinder::ChainLinks(chains, links);
         terminatedChains.insert(terminatedChains.end(), nextSet.begin(), nextSet.end());
         iteration++;
-        // 4th iteration: repeat prev
     }
 
     ExportChainsToCSV(terminatedChains, "chains.csv");
@@ -40,42 +37,42 @@ int main()
     return 0;
 }
 
-std::vector<Entry> ImportEntries(std::string& filename)
-{
-    std::vector<Entry> entries;
-    std::ifstream file(filename);
-
-    if (!file.is_open())
-    {
-        std::println("Error: Could not open the file {}", filename);
-        return entries;
-    }
-
-    std::string line;
-    int row = 0;
-    std::getline(file, line);
-
-    while (std::getline(file, line)) {
-        row++;
-
-        if (line.empty()) continue;
-
-        std::stringstream ss(line);
-        std::string romajiTitle;
-        std::string englishTitle;
-
-        char delimiter = '\t';
-        if (std::getline(ss, romajiTitle, delimiter) && std::getline(ss, englishTitle, delimiter))
-            entries.emplace_back(romajiTitle, englishTitle);
-        else
-            std::println("Warning: Row {} is missing a column", filename);
-    }
-
-    file.close();
-    std::println("Finished reading file.");
-    std::println();
-    return entries;
-}
+//std::vector<Entry> ImportEntries(std::string& filename)
+//{
+//    std::vector<Entry> entries;
+//    std::ifstream file(filename);
+//
+//    if (!file.is_open())
+//    {
+//        std::println("Error: Could not open the file {}", filename);
+//        return entries;
+//    }
+//
+//    std::string line;
+//    int row = 0;
+//    std::getline(file, line);
+//
+//    while (std::getline(file, line)) {
+//        row++;
+//
+//        if (line.empty()) continue;
+//
+//        std::stringstream ss(line);
+//        std::string romajiTitle;
+//        std::string englishTitle;
+//
+//        char delimiter = '\t';
+//        if (std::getline(ss, romajiTitle, delimiter) && std::getline(ss, englishTitle, delimiter))
+//            entries.emplace_back(romajiTitle, englishTitle);
+//        else
+//            std::println("Warning: Row {} is missing a column", filename);
+//    }
+//
+//    file.close();
+//    std::println("Finished reading file.");
+//    std::println();
+//    return entries;
+//}
 
 void ExportChainsToCSV(const std::vector<Chain>& chains, const std::string& filename)
 {

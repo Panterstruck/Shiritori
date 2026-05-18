@@ -14,7 +14,7 @@ std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 		for (size_t right = left + 1; right < entries.size(); right++)
 		{
 			auto& rightEntry = entries.at(right);
-			const Language languages[] = { ROMANJI, ENGLISH };
+			const Language languages[] = { ROMAJI, ENGLISH };
 
 			for (auto leftLanguage : languages)
 			{

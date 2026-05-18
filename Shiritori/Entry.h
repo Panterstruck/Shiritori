@@ -5,8 +5,7 @@
 class Entry
 {
 public:
-
-	Entry(std::string romanjiTitle, std::string englishTitle);
+	Entry(int id, std::string romajiTitle, std::string englishTitle);
 
 	std::string GetTitle(Language language) const;
 	std::string GetBeginning(Language language) const;
@@ -16,14 +15,13 @@ public:
 	bool EndsWithN(Language language) const;
 
 private:
-	std::string romanjiTitle;
+	std::string romajiTitle;
 	std::string englishTitle;
 
-	std::string sanitizedRomanjiTitle;
+	std::string sanitizedRomajiTitle;
 	std::string sanitizedEnglishTitle;
 
 	int id;
 
-	static int GenerateId();
 	static std::string SanitizeTitle(const std::string& input);
 };
