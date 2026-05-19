@@ -100,7 +100,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;CPPHTTPLIB_OPENSSL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -136,6 +136,7 @@
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="Link.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="UserQuerier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChainFinder.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Language.h" />
     <ClInclude Include="Link.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="UserQuerier.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

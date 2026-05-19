@@ -1,4 +1,3 @@
-#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <print>
 #include <stdexcept>
 #include <format>
@@ -19,26 +18,8 @@ std::vector<Entry> DataFetcher::GetAnilistEntriesByUser(std::string username, st
 	if (response->status != 200)
 		throw std::runtime_error(std::format("AniList rejected the request. Status: {}. Message: {}", response->status, response->body));
 
-	std::println("Status: {}", response->status);
+	std::println("Retrieving valid Entries for user {} Status: {}", username, response->status);
 	entries = ReadEntries(response, startDate);
-
-
-	if (response)
-	{
-		if (response->status == 200)
-		{
-			std::println("Success!");
-		}
-		else
-		{
-			std::println(stderr, "AniList rejected the request. Status: {}", response->status);
-			std::println(stderr, "Error Message: {}", response->body);
-		}
-	}
-	else
-		std::println(stderr, "Network error: {}", httplib::to_string(response.error()));
-
-	std::println("Status: {}", response->status);
 	return entries;
 }
 

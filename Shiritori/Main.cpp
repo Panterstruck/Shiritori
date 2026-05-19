@@ -6,6 +6,7 @@
 #include "Main.h"
 #include "ChainFinder.h"
 #include "DataFetcher.h"
+#include "UserQuerier.h"
 
 int main()
 {
@@ -13,7 +14,9 @@ int main()
 
 	try
 	{
-		auto entries = DataFetcher::GetAnilistEntriesByUser("JaguarJack", "2024-05-17");
+		auto url = UserQuerier::PromptForCommentUrl();
+		auto [username, startDate] = UserQuerier::ParseChallengeComment(url);
+		auto entries = DataFetcher::GetAnilistEntriesByUser(username, startDate);
 		std::println("Successfully loaded {} entries for the Shiritori algorithm.", entries.size());
 
 		auto links = ChainFinder::FindLinks(entries);
