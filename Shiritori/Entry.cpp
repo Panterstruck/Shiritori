@@ -21,20 +21,28 @@ std::string Entry::GetTitle(Language language) const
 
 std::string Entry::GetBeginning(Language language) const
 {
+	std::string beginning;
 	if (language == ROMAJI)
-		return sanitizedRomajiTitle.substr(0, 2);
+		beginning = sanitizedRomajiTitle;
 	else if (language == ENGLISH)
-		return sanitizedEnglishTitle.substr(0, 2);
-	return std::string();
+		beginning = sanitizedEnglishTitle;
+
+	if (beginning.size() >= 2)
+		beginning = beginning.substr(0, 2);
+	return beginning;
 }
 
 std::string Entry::GetEnding(Language language) const
 {
+	std::string ending;
 	if (language == ROMAJI)
-		return sanitizedRomajiTitle.substr(sanitizedRomajiTitle.size() - 2 , 2);
+		ending = sanitizedRomajiTitle;
 	else if (language == ENGLISH)
-		return sanitizedEnglishTitle.substr(sanitizedEnglishTitle.size() - 2, 2);
-	return std::string();
+		ending = sanitizedEnglishTitle; 
+
+	if (ending.size() >= 2)
+		ending = ending.substr(ending.size() - 2, 2);
+	return ending;
 }
 
 int Entry::GetId() const
@@ -44,32 +52,37 @@ int Entry::GetId() const
 
 bool Entry::StartsWithN(Language language) const
 {
+	std::string title;
 	if (language == ROMAJI)
-		return sanitizedRomajiTitle.substr(0, 1) == "N";
+		title = sanitizedRomajiTitle;
 	else if (language == ENGLISH)
-		return sanitizedEnglishTitle.substr(0, 1) == "N";
-	return false;
+		title = sanitizedEnglishTitle;
+
+	if (title.size() >= 1)
+		title = title.substr(0, 1);
+	return title == "N";
 }
 
 bool Entry::EndsWithN(Language language) const
 {
+	std::string title;
 	if (language == ROMAJI)
-		return sanitizedRomajiTitle.substr(sanitizedRomajiTitle.size() - 1, 1) == "N";
+		title = sanitizedRomajiTitle;
 	else if (language == ENGLISH)
-		return sanitizedEnglishTitle.substr(sanitizedEnglishTitle.size() - 1, 1) == "N";
-	return false;
+		title = sanitizedEnglishTitle;
+
+	if (title.size() >= 1)
+		title = title.substr(title.size() - 1, 1);
+	return title == "N";
 }
 
 std::string Entry::SanitizeTitle(const std::string& input)
 {
 	std::string result;
-	// Pre-allocate memory to prevent reallocation overhead during the loop
 	result.reserve(input.size());
 
 	for (char c : input)
 	{
-		// Note: Casting to unsigned char is required by the C++ standard 
-		// to prevent undefined behavior with negative char values.
 		if (std::isalpha(static_cast<unsigned char>(c)))
 			result.push_back(std::toupper(static_cast<unsigned char>(c)));
 	}
