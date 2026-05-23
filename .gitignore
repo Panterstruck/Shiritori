@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # user defined ignores
 *.csv
+*.tsv

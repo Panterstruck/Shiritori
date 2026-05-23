@@ -20,7 +20,7 @@ int main()
 		std::println("Successfully loaded {} entries for the Shiritori algorithm.", entries.size());
 
 		auto terminatedChains = ChainFinder::FindChains(entries);
-		ExportChainsToCSV(terminatedChains, "chains.csv");
+		ExportChainsToCSV(terminatedChains, "chains.tsv");
 	}
 	catch (const std::exception& e)
 	{
