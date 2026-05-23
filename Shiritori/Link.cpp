@@ -26,6 +26,11 @@ bool Link::EndsWithN() const
 	return entry->EndsWithN(language);
 }
 
+std::string Link::GetEnding() const
+{
+	return entry->GetEnding(language);
+}
+
 bool Link::operator==(const Link& other) const
 {
 	return this->GetId() == other.GetId();

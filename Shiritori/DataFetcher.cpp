@@ -74,13 +74,14 @@ std::vector<Entry> DataFetcher::ReadEntries(httplib::Result& response, std::stri
 			auto startedAt = entryNode["startedAt"];
 
 			std::string format = media["format"].is_null() ? "" : media["format"].get<std::string>();
-			if (!IsValidFormat(media))
-				continue;
 
 			if (!IsAfterChallengeEntry(startedAt, challengeStartDate))
 				continue;
 
 			if (!IsValidLength(media))
+				continue;
+
+			if (!IsValidFormat(media))
 				continue;
 
 			entries.push_back(CreateEntry(media));

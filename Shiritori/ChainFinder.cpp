@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <ranges>
 #include "ChainFinder.h"
 #include "Link.h"
 
@@ -24,7 +25,7 @@ std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 	std::vector<Chain> chains;
 
 	// find all links: pairs of entries where the last two letters of one match the first two of the next.
-	// save this pair with the language config of each entry in some sort of object
+	// save this pair with the language config of each entry in a Link object
 	for (size_t left = 0; left < entries.size(); left++)
 	{
 		auto& leftEntry = entries.at(left);
@@ -37,12 +38,14 @@ std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 			{
 				for (auto rightLanguage : languages)
 				{
-					// Forward Check: Left -> Right
-					if (IsMatch(leftEntry, leftLanguage, rightEntry, rightLanguage))
+					if (IsMatch(leftEntry, leftLanguage, rightEntry, rightLanguage)
+						&& leftEntry.GetBeginning(leftLanguage) != leftEntry.GetEnding(leftLanguage)
+						&& !leftEntry.EndsWithN(leftLanguage))
 						chains.emplace_back(LinkEntries(leftEntry, leftLanguage, rightEntry, rightLanguage));
 
-					// Reverse Check: Right -> Left
-					if (IsMatch(rightEntry, rightLanguage, leftEntry, leftLanguage))
+					if (IsMatch(rightEntry, rightLanguage, leftEntry, leftLanguage)
+						&& rightEntry.GetBeginning(rightLanguage) != rightEntry.GetEnding(rightLanguage)
+						&& !rightEntry.EndsWithN(rightLanguage))
 						chains.emplace_back(LinkEntries(rightEntry, rightLanguage, leftEntry, leftLanguage));
 				}
 			}
@@ -62,20 +65,18 @@ std::vector<Chain> ChainFinder::ChainLinks(std::vector<Chain>& openChains, const
 		std::vector<Chain> extendedChains;
 		auto& left = chain.back();
 
-		if (!left.EndsWithN())
+		for (auto& link : links)
 		{
-			for (auto& link : links)
+			auto& right = link.front();
+			auto& next = link.back();
+			if (left == right
+				&& left.GetLanguage() == right.GetLanguage()
+				&& !std::ranges::contains(chain, next)
+				&& IsFreeConnection(chain, next))
 			{
-				auto& right = link.front();
-				auto& next = link.back();
-				if (left == right
-					&& left.GetLanguage() == right.GetLanguage()
-					&& !std::ranges::contains(chain, next))
-				{
-					auto newChain = chain;
-					newChain.push_back(next);
-					extendedChains.push_back(std::move(newChain));
-				}
+				auto newChain = chain;
+				newChain.push_back(next);
+				extendedChains.push_back(std::move(newChain));
 			}
 		}
 
@@ -111,4 +112,18 @@ std::vector<Link> ChainFinder::LinkEntries(const Entry& leftEntry, Language left
 	links.emplace_back(leftEntry, leftLanguage);
 	links.emplace_back(rightEntry, rightLanguage);
 	return links;
+}
+
+bool ChainFinder::IsFreeConnection(const Chain& chain, const Link& entry)
+{
+	if (entry.EndsWithN())
+		return true;
+
+	for (auto& link : chain)
+	{
+		if (link.GetEnding() == entry.GetEnding())
+			return false;
+	}
+
+	return true;
 }

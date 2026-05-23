@@ -10,6 +10,7 @@ public:
 	std::string GetTitle() const;
 	Language GetLanguage() const;
 	bool EndsWithN() const;
+	std::string GetEnding() const;
 
 	bool operator==(const Link& other) const;
 

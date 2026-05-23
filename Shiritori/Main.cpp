@@ -28,6 +28,9 @@ int main()
 		return -1;
 	}
 
+	std::println("\nPress Enter to close the application...");
+	std::cin.get();
+
 	return 0;
 }
 
