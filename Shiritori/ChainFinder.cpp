@@ -2,6 +2,23 @@
 #include "ChainFinder.h"
 #include "Link.h"
 
+std::vector<Chain> ChainFinder::FindChains(const std::vector<Entry>& entries)
+{
+	auto links = ChainFinder::FindLinks(entries);
+	auto chains = links;
+	int iteration = 0;
+	std::vector<Chain> terminatedChains;
+
+	while (chains.size() > 0 && iteration < entries.size())
+	{
+		auto nextSet = ChainLinks(chains, links);
+		terminatedChains.insert(terminatedChains.end(), nextSet.begin(), nextSet.end());
+		iteration++;
+	}
+	std::ranges::sort(terminatedChains, [](const Chain& a, const Chain& b) { return a.size() > b.size(); });
+	return terminatedChains;
+}
+
 std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 {
 	std::vector<Chain> chains;
@@ -79,7 +96,13 @@ bool ChainFinder::IsMatch(const Entry& leftEntry, Language leftLanguage, const E
 {
 	if (rightEntry.StartsWithN(rightLanguage))
 		return false;
-	return leftEntry.GetEnding(leftLanguage) == rightEntry.GetBeginning(rightLanguage);
+
+	auto ending = leftEntry.GetEnding(leftLanguage);
+	auto beginning = rightEntry.GetBeginning(rightLanguage);
+	if (ending.length() < 2 || beginning.length() < 2)
+		return false;
+
+	return ending == beginning;
 }
 
 std::vector<Link> ChainFinder::LinkEntries(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage)

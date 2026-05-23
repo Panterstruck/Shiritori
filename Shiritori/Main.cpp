@@ -19,18 +19,7 @@ int main()
 		auto entries = DataFetcher::GetAnilistEntriesByUser(username, startDate);
 		std::println("Successfully loaded {} entries for the Shiritori algorithm.", entries.size());
 
-		auto links = ChainFinder::FindLinks(entries);
-		auto chains = links;
-		int iteration = 0;
-		std::vector<Chain> terminatedChains;
-
-		while (chains.size() > 0 && iteration < entries.size())
-		{
-			auto nextSet = ChainFinder::ChainLinks(chains, links);
-			terminatedChains.insert(terminatedChains.end(), nextSet.begin(), nextSet.end());
-			iteration++;
-		}
-
+		auto terminatedChains = ChainFinder::FindChains(entries);
 		ExportChainsToCSV(terminatedChains, "chains.csv");
 	}
 	catch (const std::exception& e)
