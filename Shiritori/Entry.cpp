@@ -50,19 +50,6 @@ int Entry::GetId() const
 	return id;
 }
 
-bool Entry::StartsWithN(Language language) const
-{
-	std::string title;
-	if (language == ROMAJI)
-		title = sanitizedRomajiTitle;
-	else if (language == ENGLISH)
-		title = sanitizedEnglishTitle;
-
-	if (title.size() >= 1)
-		title = title.substr(0, 1);
-	return title == "N";
-}
-
 bool Entry::EndsWithN(Language language) const
 {
 	std::string title;

@@ -26,7 +26,7 @@ std::vector<Entry> DataFetcher::GetAnilistEntriesByUser(std::string username, st
 nlohmann::json DataFetcher::BuildRequest(std::string username)
 {
 	std::string query = R"(
-        query ($user: String) 
+        query ($user: String)
 		{
 			MediaListCollection(userName: $user, type: ANIME, status: COMPLETED)
 			{

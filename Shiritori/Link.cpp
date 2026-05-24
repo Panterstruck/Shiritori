@@ -31,6 +31,16 @@ std::string Link::GetEnding() const
 	return entry->GetEnding(language);
 }
 
+std::string Link::GetBeginning() const
+{
+	return entry->GetBeginning(language);
+}
+
+bool Link::IsValidLink() const
+{
+	return !EndsWithN() && GetBeginning() != GetEnding();
+}
+
 bool Link::operator==(const Link& other) const
 {
 	return this->GetId() == other.GetId();

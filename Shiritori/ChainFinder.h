@@ -14,8 +14,7 @@ public:
 private:
 	static std::vector<Chain> FindLinks(const std::vector<Entry>& entries);
 	static std::vector<Chain> ChainLinks(std::vector<Chain>& openChains, const std::vector<Chain>& links);
-	static bool IsMatch(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage);
-	static std::vector<Link> LinkEntries(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage);
+	static bool IsMatch(const Link& left, const Link& right);
 	static bool IsFreeConnection(const Chain& chain, const Link& entry);
 };
 

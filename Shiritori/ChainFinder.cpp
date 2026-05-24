@@ -38,15 +38,16 @@ std::vector<Chain> ChainFinder::FindLinks(const std::vector<Entry>& entries)
 			{
 				for (auto rightLanguage : languages)
 				{
-					if (IsMatch(leftEntry, leftLanguage, rightEntry, rightLanguage)
-						&& leftEntry.GetBeginning(leftLanguage) != leftEntry.GetEnding(leftLanguage)
-						&& !leftEntry.EndsWithN(leftLanguage))
-						chains.emplace_back(LinkEntries(leftEntry, leftLanguage, rightEntry, rightLanguage));
+					Link leftLink(leftEntry, leftLanguage);
+					Link rightLink(rightEntry, rightLanguage);
 
-					if (IsMatch(rightEntry, rightLanguage, leftEntry, leftLanguage)
-						&& rightEntry.GetBeginning(rightLanguage) != rightEntry.GetEnding(rightLanguage)
-						&& !rightEntry.EndsWithN(rightLanguage))
-						chains.emplace_back(LinkEntries(rightEntry, rightLanguage, leftEntry, leftLanguage));
+					// forwards check: left -> right
+					if (leftLink.IsValidLink() && IsMatch(leftLink, rightLink))
+						chains.push_back({ leftLink, rightLink });
+
+					// backwards check: right -> left
+					if (rightLink.IsValidLink() && IsMatch(rightLink, leftLink))
+						chains.push_back({ rightLink, leftLink });
 				}
 			}
 		}
@@ -93,25 +94,14 @@ std::vector<Chain> ChainFinder::ChainLinks(std::vector<Chain>& openChains, const
 	return terminatedChains;
 }
 
-bool ChainFinder::IsMatch(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage)
+bool ChainFinder::IsMatch(const Link& left, const Link& right)
 {
-	if (rightEntry.StartsWithN(rightLanguage))
-		return false;
-
-	auto ending = leftEntry.GetEnding(leftLanguage);
-	auto beginning = rightEntry.GetBeginning(rightLanguage);
+	auto ending = left.GetEnding();
+	auto beginning = right.GetBeginning();
 	if (ending.length() < 2 || beginning.length() < 2)
-		return false;
+		return false;	// the titles don't provide valid 2-letter combinations
 
 	return ending == beginning;
-}
-
-std::vector<Link> ChainFinder::LinkEntries(const Entry& leftEntry, Language leftLanguage, const Entry& rightEntry, Language rightLanguage)
-{
-	std::vector<Link> links;
-	links.emplace_back(leftEntry, leftLanguage);
-	links.emplace_back(rightEntry, rightLanguage);
-	return links;
 }
 
 bool ChainFinder::IsFreeConnection(const Chain& chain, const Link& entry)

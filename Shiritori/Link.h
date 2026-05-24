@@ -11,6 +11,8 @@ public:
 	Language GetLanguage() const;
 	bool EndsWithN() const;
 	std::string GetEnding() const;
+	std::string GetBeginning() const;
+	bool IsValidLink() const;
 
 	bool operator==(const Link& other) const;
 
